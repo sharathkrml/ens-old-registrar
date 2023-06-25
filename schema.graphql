@@ -1,6 +1,68 @@
-type ExampleEntity @entity {
-  id: ID!
-  count: BigInt!
-  hash: Bytes! # bytes32
-  registrationDate: BigInt! # uint256
+# event AuctionStarted(bytes32 indexed hash, uint registrationDate);
+type AuctionStarted @entity {
+    id: ID!
+    index: BigInt!
+    hash: Bytes!
+
+    ensHash: Bytes!
+    registrationDate: BigInt!
+}
+
+# event NewBid(bytes32 indexed hash, address indexed bidder, uint deposit);
+type NewBid @entity {
+    id: ID!
+    index: BigInt!
+    hash: Bytes!
+
+    ensHash: Bytes!
+    bidder: Bytes!
+    deposit: BigInt!
+}
+# event BidRevealed(bytes32 indexed hash, address indexed owner, uint value, uint8 status);
+type BidRevealed @entity {
+    id: ID!
+    index: BigInt!
+    hash: Bytes!
+
+    ensHash: Bytes!
+    owner: Bytes!
+    value: BigInt!
+    status: String!
+}
+# event HashRegistered(bytes32 indexed hash, address indexed owner, uint value, uint registrationDate);
+
+type HashRegistered @entity {
+    id: ID!
+    index: BigInt!
+    hash: Bytes!
+
+    ensHash: Bytes!
+    owner: Bytes!
+    value: BigInt!
+    registrationDate: BigInt!
+}
+# event HashReleased(bytes32 indexed hash, uint value);
+type HashReleased @entity {
+    id: ID!
+    index: BigInt!
+    hash: Bytes!
+
+    ensHash: Bytes!
+    value: BigInt!
+}
+
+# event HashInvalidated(bytes32 indexed hash, string indexed name, uint value, uint registrationDate);
+type HashInvalidated @entity {
+    id: ID!
+    index: BigInt!
+    hash: Bytes!
+
+    ensHash: Bytes!
+    name: Bytes!
+    value: BigInt!
+    registrationDate: BigInt!
+}
+type Counter @entity {
+    id: ID!
+    count: BigInt!
 }

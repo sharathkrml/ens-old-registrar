@@ -1,38 +1,39 @@
-specVersion: 0.0.1
+specVersion: 0.0.4
 schema:
-  file: ./schema.graphql
+    file: ./schema.graphql
 dataSources:
-  - kind: ethereum
-    name: Registrar
-    network: mainnet
-    source:
-      address: "0x6090A6e47849629b7245Dfa1Ca21D94cd15878Ef"
-      abi: Registrar
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.5
-      language: wasm/assemblyscript
-      entities:
-        - AuctionStarted
-        - NewBid
-        - BidRevealed
-        - HashRegistered
-        - HashReleased
-        - HashInvalidated
-      abis:
-        - name: Registrar
-          file: ./abis/Registrar.json
-      eventHandlers:
-        - event: AuctionStarted(indexed bytes32,uint256)
-          handler: handleAuctionStarted
-        - event: NewBid(indexed bytes32,indexed address,uint256)
-          handler: handleNewBid
-        - event: BidRevealed(indexed bytes32,indexed address,uint256,uint8)
-          handler: handleBidRevealed
-        - event: HashRegistered(indexed bytes32,indexed address,uint256,uint256)
-          handler: handleHashRegistered
-        - event: HashReleased(indexed bytes32,uint256)
-          handler: handleHashReleased
-        - event: HashInvalidated(indexed bytes32,indexed string,uint256,uint256)
-          handler: handleHashInvalidated
-      file: ./src/registrar.ts
+    - kind: ethereum
+      name: Registrar
+      network: mainnet
+      source:
+          address: "0x6090A6e47849629b7245Dfa1Ca21D94cd15878Ef"
+          abi: Registrar
+          startBlock: 3605331
+      mapping:
+          kind: ethereum/events
+          apiVersion: 0.0.6
+          language: wasm/assemblyscript
+          entities:
+              - AuctionStarted
+              - NewBid
+              - BidRevealed
+              - HashRegistered
+              - HashReleased
+              - HashInvalidated
+          abis:
+              - name: Registrar
+                file: ./abis/Registrar.json
+          eventHandlers:
+              - event: AuctionStarted(indexed bytes32,uint256)
+                handler: handleAuctionStarted
+              - event: NewBid(indexed bytes32,indexed address,uint256)
+                handler: handleNewBid
+              - event: BidRevealed(indexed bytes32,indexed address,uint256,uint8)
+                handler: handleBidRevealed
+              - event: HashRegistered(indexed bytes32,indexed address,uint256,uint256)
+                handler: handleHashRegistered
+              - event: HashReleased(indexed bytes32,uint256)
+                handler: handleHashReleased
+              - event: HashInvalidated(indexed bytes32,indexed string,uint256,uint256)
+                handler: handleHashInvalidated
+          file: ./src/registrar.ts

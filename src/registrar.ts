@@ -1,72 +1,119 @@
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
-  Registrar,
-  AuctionStarted,
-  NewBid,
-  BidRevealed,
-  HashRegistered,
-  HashReleased,
-  HashInvalidated
+    Registrar,
+    AuctionStarted as AuctionStartedEvent,
+    NewBid as NewBidEvent,
+    BidRevealed as BidRevealedEvent,
+    HashRegistered as HashRegisteredEvent,
+    HashReleased as HashReleasedEvent,
+    HashInvalidated as HashInvalidatedEvent,
 } from "../generated/Registrar/Registrar"
-import { ExampleEntity } from "../generated/schema"
+import {
+    AuctionStarted,
+    BidRevealed,
+    Counter,
+    HashInvalidated,
+    HashRegistered,
+    HashReleased,
+    NewBid,
+} from "../generated/schema"
 
-export function handleAuctionStarted(event: AuctionStarted): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+export function handleAuctionStarted(event: AuctionStartedEvent): void {
+    let counter = getCounter("AuctionStarted")
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+    let auctionStarted = new AuctionStarted(counter.count.toString())
+    auctionStarted.index = counter.count
+    auctionStarted.hash = event.transaction.hash
+    auctionStarted.ensHash = event.params.hash
+    auctionStarted.registrationDate = event.params.registrationDate
+    auctionStarted.save()
 
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
-
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.hash = event.params.hash
-  entity.registrationDate = event.params.registrationDate
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.getAllowedTime(...)
-  // - contract.shaBid(...)
-  // - contract.entries(...)
-  // - contract.ens(...)
-  // - contract.sealedBids(...)
-  // - contract.state(...)
-  // - contract.isAllowed(...)
-  // - contract.registryStarted(...)
-  // - contract.launchLength(...)
-  // - contract.rootNode(...)
+    counter.save()
 }
 
-export function handleNewBid(event: NewBid): void {}
+export function handleNewBid(event: NewBidEvent): void {
+    let counter = getCounter("NewBid")
 
-export function handleBidRevealed(event: BidRevealed): void {}
+    let newBid = new NewBid(counter.count.toString())
+    newBid.index = counter.count
+    newBid.hash = event.transaction.hash
 
-export function handleHashRegistered(event: HashRegistered): void {}
+    newBid.ensHash = event.params.hash
+    newBid.bidder = event.params.bidder
+    newBid.deposit = event.params.deposit
+    newBid.save()
 
-export function handleHashReleased(event: HashReleased): void {}
+    counter.save()
+}
 
-export function handleHashInvalidated(event: HashInvalidated): void {}
+export function handleBidRevealed(event: BidRevealedEvent): void {
+    let counter = getCounter("BidRevealed")
+
+    let bidRevealed = new BidRevealed(counter.count.toString())
+    bidRevealed.index = counter.count
+    bidRevealed.hash = event.transaction.hash
+
+    bidRevealed.ensHash = event.params.hash
+    bidRevealed.owner = event.params.owner
+    bidRevealed.value = event.params.value
+    bidRevealed.status = event.params.status.toString()
+    bidRevealed.save()
+
+    counter.save()
+}
+
+export function handleHashRegistered(event: HashRegisteredEvent): void {
+    let counter = getCounter("HashRegistered")
+
+    let hashRegistered = new HashRegistered(counter.count.toString())
+    hashRegistered.index = counter.count
+    hashRegistered.hash = event.transaction.hash
+
+    hashRegistered.ensHash = event.params.hash
+    hashRegistered.owner = event.params.owner
+    hashRegistered.value = event.params.value
+    hashRegistered.registrationDate = event.params.registrationDate
+    hashRegistered.save()
+
+    counter.save()
+}
+
+export function handleHashReleased(event: HashReleasedEvent): void {
+    let counter = getCounter("HashReleased")
+
+    let hashReleased = new HashReleased(counter.count.toString())
+    hashReleased.index = counter.count
+    hashReleased.hash = event.transaction.hash
+
+    hashReleased.ensHash = event.params.hash
+    hashReleased.value = event.params.value
+    hashReleased.save()
+
+    counter.save()
+}
+
+export function handleHashInvalidated(event: HashInvalidatedEvent): void {
+    let counter = getCounter("HashInvalidated")
+
+    let hashInvalidated = new HashInvalidated(counter.count.toString())
+    hashInvalidated.index = counter.count
+    hashInvalidated.hash = event.transaction.hash
+
+    hashInvalidated.ensHash = event.params.hash
+    hashInvalidated.name = event.params.name
+    hashInvalidated.value = event.params.value
+    hashInvalidated.registrationDate = event.params.registrationDate
+    hashInvalidated.save()
+
+    counter.save()
+}
+
+function getCounter(key: string): Counter {
+    let counter = Counter.load(key)
+    if (!counter) {
+        counter = new Counter(key)
+        counter.count = BigInt.fromI32(0)
+    }
+    counter.count = counter.count.plus(BigInt.fromI32(1))
+    return counter
+}
