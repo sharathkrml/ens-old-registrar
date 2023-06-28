@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
     Registrar,
     AuctionStarted as AuctionStartedEvent,
@@ -16,6 +16,7 @@ import {
     HashRegistered,
     HashReleased,
     NewBid,
+    Aggregate,
 } from "../generated/schema"
 
 export function handleAuctionStarted(event: AuctionStartedEvent): void {
@@ -29,6 +30,14 @@ export function handleAuctionStarted(event: AuctionStartedEvent): void {
     auctionStarted.save()
 
     counter.save()
+    let agg = getAggregation(event.params.hash)
+    let entity = agg.auctionStarted
+    if (entity == null) {
+        entity = []
+    }
+    entity.push(auctionStarted.id)
+    agg.auctionStarted = entity
+    agg.save()
 }
 
 export function handleNewBid(event: NewBidEvent): void {
@@ -44,6 +53,14 @@ export function handleNewBid(event: NewBidEvent): void {
     newBid.save()
 
     counter.save()
+    let agg = getAggregation(event.params.hash)
+    let entity = agg.newBid
+    if (entity == null) {
+        entity = []
+    }
+    entity.push(newBid.id)
+    agg.newBid = entity
+    agg.save()
 }
 
 export function handleBidRevealed(event: BidRevealedEvent): void {
@@ -60,6 +77,15 @@ export function handleBidRevealed(event: BidRevealedEvent): void {
     bidRevealed.save()
 
     counter.save()
+
+    let agg = getAggregation(event.params.hash)
+    let entity = agg.bidRevealed
+    if (entity == null) {
+        entity = []
+    }
+    entity.push(bidRevealed.id)
+    agg.bidRevealed = entity
+    agg.save()
 }
 
 export function handleHashRegistered(event: HashRegisteredEvent): void {
@@ -76,6 +102,15 @@ export function handleHashRegistered(event: HashRegisteredEvent): void {
     hashRegistered.save()
 
     counter.save()
+
+    let agg = getAggregation(event.params.hash)
+    let entity = agg.hashRegistered
+    if (entity == null) {
+        entity = []
+    }
+    entity.push(hashRegistered.id)
+    agg.hashRegistered = entity
+    agg.save()
 }
 
 export function handleHashReleased(event: HashReleasedEvent): void {
@@ -90,6 +125,15 @@ export function handleHashReleased(event: HashReleasedEvent): void {
     hashReleased.save()
 
     counter.save()
+
+    let agg = getAggregation(event.params.hash)
+    let entity = agg.hashReleased
+    if (entity == null) {
+        entity = []
+    }
+    entity.push(hashReleased.id)
+    agg.hashReleased = entity
+    agg.save()
 }
 
 export function handleHashInvalidated(event: HashInvalidatedEvent): void {
@@ -106,6 +150,15 @@ export function handleHashInvalidated(event: HashInvalidatedEvent): void {
     hashInvalidated.save()
 
     counter.save()
+
+    let agg = getAggregation(event.params.hash)
+    let entity = agg.hashInvalidated
+    if (entity == null) {
+        entity = []
+    }
+    entity.push(hashInvalidated.id)
+    agg.hashInvalidated = entity
+    agg.save()
 }
 
 function getCounter(key: string): Counter {
@@ -116,4 +169,11 @@ function getCounter(key: string): Counter {
     }
     counter.count = counter.count.plus(BigInt.fromI32(1))
     return counter
+}
+function getAggregation(hash: Bytes): Aggregate {
+    let entity = Aggregate.load(hash.toHexString())
+    if (!entity) {
+        entity = new Aggregate(hash.toHexString())
+    }
+    return entity
 }

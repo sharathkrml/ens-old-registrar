@@ -66,3 +66,13 @@ type Counter @entity {
     id: ID!
     count: BigInt!
 }
+
+type Aggregate @entity {
+    id: ID! # ensHash
+    auctionStarted: [AuctionStarted!]
+    newBid: [NewBid!]
+    bidRevealed: [BidRevealed!]
+    hashRegistered: [HashRegistered!]
+    hashReleased: [HashReleased!]
+    hashInvalidated: [HashInvalidated!]
+}
