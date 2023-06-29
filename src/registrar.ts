@@ -1,4 +1,4 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt, Bytes, ens } from "@graphprotocol/graph-ts"
 import {
     Registrar,
     AuctionStarted as AuctionStartedEvent,
@@ -171,9 +171,11 @@ function getCounter(key: string): Counter {
     return counter
 }
 function getAggregation(hash: Bytes): Aggregate {
-    let entity = Aggregate.load(hash.toHexString())
+    const hashStr = hash.toHexString()
+    let entity = Aggregate.load(hashStr)
     if (!entity) {
-        entity = new Aggregate(hash.toHexString())
+        entity = new Aggregate(hashStr)
+        entity.labelName = ens.nameByHash(hashStr)
     }
     return entity
 }

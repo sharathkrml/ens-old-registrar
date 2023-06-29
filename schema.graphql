@@ -69,6 +69,7 @@ type Counter @entity {
 
 type Aggregate @entity {
     id: ID! # ensHash
+    labelName: String
     auctionStarted: [AuctionStarted!]
     newBid: [NewBid!]
     bidRevealed: [BidRevealed!]

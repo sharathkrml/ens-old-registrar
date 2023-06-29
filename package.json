@@ -5,11 +5,13 @@
         "codegen": "graph codegen",
         "build": "graph build",
         "deploy": "graph deploy --product hosted-service sharathkrml/ens-old-registrar",
+        "deploy-1": "graph deploy --product hosted-service sharathkrml/ens-old-registrar-first",
         "create-local": "graph create --node http://localhost:8020/ sharathkrml/ens-old-registrar",
         "remove-local": "graph remove --node http://localhost:8020/ sharathkrml/ens-old-registrar",
         "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 sharathkrml/ens-old-registrar",
         "test": "graph test",
-        "cbd": "yarn codegen && yarn build && yarn deploy"
+        "cbd": "yarn codegen && yarn build && yarn deploy",
+        "cbd1": "yarn codegen && yarn build && yarn deploy-1"
     },
     "dependencies": {
         "@graphprotocol/graph-cli": "0.48.0",
